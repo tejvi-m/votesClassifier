@@ -11,11 +11,16 @@ int computeHammingDistance(vector<char> point1, vector<char> point2){
 
   //not tested.
   int size = point1.size();
-  int matches = 0;
+  int mismatches = 0;
   for(int i = 0; i < size; i++){
-    if(point1[i] == point2[i] || point1[i] == '?' || point2[i] == '?') matches++;
+
+    //should only be run on imputed data? not sure how to handle this
+    //greater the distance, the more dissimilar they are
+    //also looking at the label for this?
+
+    if(!(point1[i] == point2[i] || point1[i] == '?' || point2[i] == '?')) mismatches++;
   }
-  return matches;
+  return mismatches;
 }
 
 vector<bool> getMax(const vector<vector<char>>& dataset){
@@ -104,6 +109,13 @@ void openFile(string filename){
   fillMax(dataset);
 
   printData(dataset);
+
+  //sanity check for hamming distance function
+  // cout << computeHammingDistance(dataset[1], dataset[2]);
+  // for(int i = 0; i < dataset[1].size(); i++){
+  //   cout << dataset[1][i] << " " << dataset[2][i] << endl;
+  // }
+
   file.close();
 }
 
