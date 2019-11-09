@@ -76,7 +76,7 @@ void printData(const vector<vector<char>> dataset){
 
 }
 
-void openFile(string filename){
+vector<vector<char>> openFile(string filename){
   ifstream file;
   string data;
   int count = 0;
@@ -117,9 +117,10 @@ void openFile(string filename){
   // }
 
   file.close();
+  return dataset;
 }
-
-int main(){
-  openFile("./data/votesData.txt");
-  return 0;
-}
+//
+// int main(){
+//   openFile("./data/votesData.txt");
+//   return 0;
+// }
