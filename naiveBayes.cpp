@@ -64,6 +64,7 @@ vector<vector<pair<double, double>>> getProbabilities(const vector<vector<char>>
   return probabilities;
 }
 
+
 char predict(const vector<char>& test, const vector<vector<pair<double, double>>>& probs){
   double prob1 = 1;
   for(int i = 0; i < probs[0].size(); i++){
@@ -88,6 +89,20 @@ char predict(const vector<char>& test, const vector<vector<pair<double, double>>
   if(prob1 > prob2) return 'r';
   return 'd';
 }
+double evaluate(const vector<vector<char>>& testData, const vector<vector<pair<double, double>>>& probs){
+    int count = 0;
+    int size = testData.size();
+
+    for(int i = 0; i < size; i++){
+      char p = predict(testData[i], probs);
+      cout << p << " ";
+      cout << testData[i][testData[0].size() - 1] << endl;
+      if(p == testData[i][testData[0].size() - 1]) count++;
+    }
+
+    return count/ (double) size;
+}
+
 
 
 int main(){
@@ -102,5 +117,8 @@ int main(){
 
   cout << predict(dataset[105], probs) << endl;
   cout << dataset[105][dataset[0].size() - 1] << endl;
+
+  cout << "score: " << evaluate(dataset, probs) << endl;
+
   return 0;
 }
