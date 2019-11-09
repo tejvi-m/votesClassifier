@@ -12,7 +12,7 @@ vector<vector<pair<double, double>>> getProbabilities(const vector<vector<char>>
   // first row for the republicans
   // second for the democrats
   // third is for the unconditional probability
-  
+
 
   for(int row = 0; row < size; row++){
     for(int col = 0; col < columns; col++){
@@ -64,6 +64,32 @@ vector<vector<pair<double, double>>> getProbabilities(const vector<vector<char>>
   return probabilities;
 }
 
+char predict(const vector<char>& test, const vector<vector<pair<double, double>>>& probs){
+  double prob1 = 1;
+  for(int i = 0; i < probs[0].size(); i++){
+    if(test[i] == 'n'){
+      prob1 *= probs[0][i].first;
+    }
+    else{
+      prob1 *= probs[0][i].second;
+    }
+  }
+
+  double prob2 = 1;
+  for(int i = 0; i < probs[0].size(); i++){
+    if(test[i] == 'n'){
+      prob2 *= probs[1][i].first;
+    }
+    else{
+      prob2 *= probs[1][i].second;
+    }
+  }
+
+  if(prob1 > prob2) return 'r';
+  return 'd';
+}
+
+
 int main(){
   vector<vector<char>> dataset = openFile("./data/votesData.txt");
   vector<vector<pair<double, double>>> probs = getProbabilities(dataset);
@@ -73,5 +99,8 @@ int main(){
     }
     cout << endl;
   }
+
+  cout << predict(dataset[105], probs) << endl;
+  cout << dataset[105][dataset[0].size() - 1] << endl;
   return 0;
 }
