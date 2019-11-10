@@ -1,6 +1,8 @@
 #include<iostream>
 #include<fstream>
 #include<vector>
+#include<algorithm>
+#include<random>
 
 using namespace std;
 
@@ -63,7 +65,7 @@ void fillMax(vector<vector<char>>& dataset){
     }
 }
 
-void printData(const vector<vector<char>> dataset){
+void printData(const vector<vector<char>>& dataset){
   int numRows = dataset.size();
   int numCols = dataset[0].size();
 
@@ -76,10 +78,23 @@ void printData(const vector<vector<char>> dataset){
 
 }
 
+void shuffleAndSplit(vector<vector<char>>& dataset, vector<vector<char>>& train, vector<vector<char>>& test, int split){
+
+  srand(time(NULL));
+  unsigned seed = rand();
+  int size = dataset.size();
+
+  shuffle(dataset.begin(), dataset.end(), default_random_engine(seed));
+
+  copy(dataset.begin(), dataset.begin() + size - (dataset.size() * split) / 100, train.begin());
+  copy(dataset.begin() + size - (dataset.size() * split) / 100, dataset.end(), test.begin());
+
+}
+
 vector<vector<char>> openFile(string filename){
   ifstream file;
   string data;
-  int count = 0;
+
   vector<vector<char>> dataset;
   vector<char> temp;
   file.open(filename);
@@ -99,16 +114,12 @@ vector<vector<char>> openFile(string filename){
     }
 
     dataset.push_back(temp);
-    for(int i = 0; i < temp.size(); i++) cout<< temp[i] << " ";
-    cout << endl;
-
-    cout << data << endl;
     // count++;
   }
 
   fillMax(dataset);
 
-  printData(dataset);
+
 
   //sanity check for hamming distance function
   // cout << computeHammingDistance(dataset[1], dataset[2]);
@@ -117,10 +128,19 @@ vector<vector<char>> openFile(string filename){
   // }
 
   file.close();
+
+  int split = 20;
+  vector<vector<char>> train(dataset.size() - (dataset.size() * split) / 100), test((dataset.size() * split) / 100);
+  shuffleAndSplit(dataset, train, test, 20);
+  printData(train);
+  cout<<"test" << endl << endl<< endl << endl << endl;
+  printData(test);
+
+  cout << train.size() << " " << test.size();
   return dataset;
 }
-//
-// int main(){
-//   openFile("./data/votesData.txt");
-//   return 0;
-// }
+
+int main(){
+  openFile("./data/votesData.txt");
+  return 0;
+}
