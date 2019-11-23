@@ -5,7 +5,7 @@
 using namespace std;
 
 vector<vector<pair<double, double>>> getProbabilities(const vector<vector<char>>& dataset){
-  int size = dataset.size();
+  int size = dataset.size() - 1;
   int columns = dataset[0].size() - 1;
   vector<vector<pair<double, double>>> probabilities (3, vector<pair<double, double>>(columns, make_pair(0, 0)));
 
@@ -64,7 +64,6 @@ vector<vector<pair<double, double>>> getProbabilities(const vector<vector<char>>
   return probabilities;
 }
 
-
 char predict(const vector<char>& test, const vector<vector<pair<double, double>>>& probs){
   double prob1 = 1;
   for(int i = 0; i < probs[0].size(); i++){
@@ -91,44 +90,53 @@ char predict(const vector<char>& test, const vector<vector<pair<double, double>>
 }
 
 double evaluate(const vector<vector<char>>& testData, const vector<vector<pair<double, double>>>& probs){
-    int count = 0;
-    int size = testData.size();
+  int count = 0;
+  int size = testData.size();
 
-    for(int i = 0; i < size; i++){
-      char p = predict(testData[i], probs);
-      cout << p << " ";
-      cout << testData[i][testData[0].size() - 1] << endl;
-      if(p == testData[i][testData[0].size() - 1]) count++;
-    }
+  for(int i = 0; i < size - 1; i++){
+    char p = predict(testData[i], probs);
+    if(p == testData[i][testData[0].size() - 1]) count++;
+  }
 
-    return count/ (double) size;
+  return count/ (double) size;
+}
+
+double learnAndEvaluate(const vector<vector<char>>& train, const vector<vector<char>>& test){
+  vector<vector<pair<double, double>>> probs = getProbabilities(train);
+  double score = evaluate(train, probs);
+  return score;
 }
 
 
+pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset, int split){
+  vector<double> scores;
+  int x = (dataset.size() * split) / 100;
+  vector<vector<char>> train(dataset.size() - x + 1);
+  vector<vector<char>> test(x);
 
-int main(){
-  vector<vector<vector<char>>> data = openFile("./data/votesData.txt");
-  vector<vector<char>> dataset = data[0];
-  vector<vector<char>> train = data[1];
-  vector<vector<char>> test = data[2];
-  shuffleAndSplit(dataset, train, test, 20);
-  vector<vector<pair<double, double>>> probs = getProbabilities(train);
-
-  cout << probs.size() << endl;
-  for(int i = 0; i < probs.size(); i++){
-    for(int j = 0; j < probs[0].size(); j++){
-      cout << probs[i][j].first << ", " << probs[i][j].second << "   ";
-    }
-    cout << endl;
+  // vector<vector<char>> train, test;
+  for(int i = 0; i < n; i++){
+    shuffleAndSplit(dataset, train, test, 20);
+    scores.push_back(learnAndEvaluate(train, test));
   }
 
-  cout << evaluate(test, probs);
+  return make_pair(scores, accumulate(scores.begin(), scores.end(), 0.0) / scores.size()) ;
+}
 
-  // cout << predict(dataset[105], probs) << endl;
-  // cout << dataset[105][dataset[0].size() - 1] << endl;
-  //
-  // cout << "score: " << evaluate(dataset, probs) << endl;
-  // KFold(10, 20, dataset);
+int main(){
+  vector<vector<char>> dataset = openFile("./data/votesData.txt");
+  vector<vector<pair<double, double>>> probs = getProbabilities(dataset);
 
+
+  // cout << crossValidate(10, dataset, 20).second;
+
+
+  pair<vector<double>, double> ret = crossValidate(10, dataset, 20);
+
+  for(int i = 0; i < 10; i++){
+    cout << ret.first[i] << endl;
+  }
+
+  cout << "average: " << ret.second << endl;
   return 0;
 }
