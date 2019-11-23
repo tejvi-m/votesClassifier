@@ -107,6 +107,31 @@ double learnAndEvaluate(const vector<vector<char>>& train, const vector<vector<c
   return score;
 }
 
+vector<vector<int>> getConfuseMatrix(int split, vector<vector<char>>& dataset){
+      vector<vector<char>> train(dataset.size() - ((dataset.size() * split) / 100) + 1);
+      vector<vector<char>> test((dataset.size() * split) / 100);
+
+      shuffleAndSplit(dataset, train, test, split);
+      vector<vector<pair<double, double>>> probs = getProbabilities(dataset);
+      int testSize = test.size();
+      int tp = 0, fp = 0, tn = 0, fn = 0;
+      vector<vector<int>> matrix(2, vector<int>(2, 0));
+      for(int i = 0; i < testSize; i++){
+          char p = predict(test[i], probs);
+          if(p == 'r' && p == test[i][test[0].size() - 1])
+              matrix[0][0]++;
+          else if(p == 'd' && p == test[i][test[0].size() - 1])
+              matrix[1][1]++;
+          else if(p == 'r' && p != test[i][test[0].size() - 1])
+              matrix[0][1]++;
+          else if(p == 'd' && p != test[i][test[0].size() - 1])
+              matrix[1][0]++;
+      }
+
+      return matrix;  
+}
+
+
 
 pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset, int split){
   vector<double> scores;
@@ -124,7 +149,8 @@ pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset,
 }
 
 int main(){
-  vector<vector<char>> dataset = openFile("./data/votesData.txt");
+  vector<vector<char>> dataset = openFile("./data/votesdata.txt");
+  saveDataset("./data/cleanedDataset.txt", dataset);
   vector<vector<pair<double, double>>> probs = getProbabilities(dataset);
 
 
@@ -135,6 +161,15 @@ int main(){
 
   for(int i = 0; i < 10; i++){
     cout << ret.first[i] << endl;
+  }
+  //to get the evaluation metrics.
+  vector<vector<int>>confusionMatrix = getConfuseMatrix(20, dataset);
+  
+  for(auto i : confusionMatrix){
+    for(auto j : i){
+      cout << j << " ";
+    }
+    cout << "\n";
   }
 
   cout << "average: " << ret.second << endl;

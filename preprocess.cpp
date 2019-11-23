@@ -49,6 +49,8 @@ vector<bool> getMax(const vector<vector<char>>& dataset){
   return maxVals;
 }
 
+
+
 void fillMax(vector<vector<char>>& dataset){
     vector<bool> maxVals = getMax(dataset);
 
@@ -88,6 +90,34 @@ void shuffleAndSplit(vector<vector<char>>& dataset, vector<vector<char>>& train,
 
   copy(dataset.begin(), dataset.begin() + size - (dataset.size() * split) / 100, train.begin());
   copy(dataset.begin() + size - (dataset.size() * split) / 100, dataset.end(), test.begin());
+
+}
+
+void saveDataset(string filename, vector<vector<char>>& dataset){
+
+    ofstream outFile; 
+  
+    string line; 
+  
+    outFile.open(filename); 
+    int i = 0, j = 0;
+    int col = dataset[0].size();
+    int row = dataset.size();
+    
+    while (outFile) { 
+        if(i == row)
+          break;
+
+        while(j < col){
+          line += dataset[i][j++];
+          line += " ";
+        }
+        i++;
+        j = 0;
+
+        outFile << line << endl; 
+        line = "";
+    } 
 
 }
 
