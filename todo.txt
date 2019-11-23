@@ -1,0 +1,5 @@
+add docs, for the love of god
+
+could use bagging - use different ways of filling in the missing values, train and treat them as separate models?
+
+boosting - write adaboost, idk how well it would work with this.

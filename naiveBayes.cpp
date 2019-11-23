@@ -7,7 +7,7 @@ using namespace std;
 vector<vector<pair<double, double>>> getProbabilities(const vector<vector<char>>& dataset){
   int size = dataset.size();
   int columns = dataset[0].size() - 1;
-  vector<vector<pair<double, double>>> probabilities (3, vector<pair<double, double>>(columns - 1, make_pair(0, 0)));
+  vector<vector<pair<double, double>>> probabilities (3, vector<pair<double, double>>(columns, make_pair(0, 0)));
 
   // first row for the republicans
   // second for the democrats
@@ -89,6 +89,7 @@ char predict(const vector<char>& test, const vector<vector<pair<double, double>>
   if(prob1 > prob2) return 'r';
   return 'd';
 }
+
 double evaluate(const vector<vector<char>>& testData, const vector<vector<pair<double, double>>>& probs){
     int count = 0;
     int size = testData.size();
@@ -106,8 +107,14 @@ double evaluate(const vector<vector<char>>& testData, const vector<vector<pair<d
 
 
 int main(){
-  vector<vector<char>> dataset = openFile("./data/votesData.txt");
-  vector<vector<pair<double, double>>> probs = getProbabilities(dataset);
+  vector<vector<vector<char>>> data = openFile("./data/votesData.txt");
+  vector<vector<char>> dataset = data[0];
+  vector<vector<char>> train = data[1];
+  vector<vector<char>> test = data[2];
+  shuffleAndSplit(dataset, train, test, 20);
+  vector<vector<pair<double, double>>> probs = getProbabilities(train);
+
+  cout << probs.size() << endl;
   for(int i = 0; i < probs.size(); i++){
     for(int j = 0; j < probs[0].size(); j++){
       cout << probs[i][j].first << ", " << probs[i][j].second << "   ";
@@ -115,10 +122,13 @@ int main(){
     cout << endl;
   }
 
-  cout << predict(dataset[105], probs) << endl;
-  cout << dataset[105][dataset[0].size() - 1] << endl;
+  cout << evaluate(test, probs);
 
-  cout << "score: " << evaluate(dataset, probs) << endl;
+  // cout << predict(dataset[105], probs) << endl;
+  // cout << dataset[105][dataset[0].size() - 1] << endl;
+  //
+  // cout << "score: " << evaluate(dataset, probs) << endl;
+  // KFold(10, 20, dataset);
 
   return 0;
 }

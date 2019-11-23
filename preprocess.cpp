@@ -91,7 +91,7 @@ void shuffleAndSplit(vector<vector<char>>& dataset, vector<vector<char>>& train,
 
 }
 
-vector<vector<char>> openFile(string filename){
+vector<vector<vector<char>>> openFile(string filename){
   ifstream file;
   string data;
 
@@ -131,16 +131,34 @@ vector<vector<char>> openFile(string filename){
 
   int split = 20;
   vector<vector<char>> train(dataset.size() - (dataset.size() * split) / 100), test((dataset.size() * split) / 100);
-  shuffleAndSplit(dataset, train, test, 20);
-  printData(train);
-  cout<<"test" << endl << endl<< endl << endl << endl;
-  printData(test);
 
-  cout << train.size() << " " << test.size();
-  return dataset;
+  //TODO return this train and test and do further ops on them
+
+  // shuffleAndSplit(dataset, train, test, 20);
+  // printData(train);
+  // cout<<"test" << endl << endl<< endl << endl << endl;
+  // printData(test);
+  //
+  // cout << train.size() << " " << test.size();
+  vector<vector<vector<char>>> final;
+  final.push_back(dataset);
+  final.push_back(train);
+  final.push_back(test);
+
+  return final;
 }
 
-int main(){
-  openFile("./data/votesData.txt");
+int KFold(int n, int split, vector<vector<char>>& dataset){
+  vector<vector<char>> train(dataset.size() - (dataset.size() * split) / 100), test((dataset.size() * split) / 100);
+  for(int i = 0; i < n; i++){
+
+    shuffleAndSplit(dataset, train, test, 20);
+  }
+
   return 0;
 }
+//
+// int main(){
+//   openFile("./data/votesData.txt");
+//   return 0;
+// }
