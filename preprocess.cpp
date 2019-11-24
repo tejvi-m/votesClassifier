@@ -67,7 +67,8 @@ void fillMax(vector<vector<char>>& dataset){
     }
 }
 
-void printData(const vector<vector<char>>& dataset){
+template <class T>
+void printData(const vector<vector<T>>& dataset){
   int numRows = dataset.size();
   int numCols = dataset[0].size();
 
@@ -77,6 +78,8 @@ void printData(const vector<vector<char>>& dataset){
     }
     cout << endl;
   }
+
+  cout << endl;
 
 }
 
@@ -95,16 +98,16 @@ void shuffleAndSplit(vector<vector<char>>& dataset, vector<vector<char>>& train,
 
 void saveDataset(string filename, vector<vector<char>>& dataset){
 
-    ofstream outFile; 
-  
-    string line; 
-  
-    outFile.open(filename); 
+    ofstream outFile;
+
+    string line;
+
+    outFile.open(filename);
     int i = 0, j = 0;
     int col = dataset[0].size();
     int row = dataset.size();
-    
-    while (outFile) { 
+
+    while (outFile) {
         if(i == row)
           break;
 
@@ -115,9 +118,9 @@ void saveDataset(string filename, vector<vector<char>>& dataset){
         i++;
         j = 0;
 
-        outFile << line << endl; 
+        outFile << line << endl;
         line = "";
-    } 
+    }
 
 }
 
@@ -159,7 +162,7 @@ vector<vector<char>> openFile(string filename){
 
   file.close();
 
-
+  saveDataset("./data/cleanedDataset.txt", dataset);
   return dataset;
 }
 //

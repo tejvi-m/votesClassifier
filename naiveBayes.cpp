@@ -90,43 +90,45 @@ char predict(const vector<char>& test, const vector<vector<pair<double, double>>
   return 'd';
 }
 
-double evaluate(const vector<vector<char>>& testData, const vector<vector<pair<double, double>>>& probs){
+
+vector<vector<int>> getConfusionMatrix(const vector<vector<char>>& test, const vector<char>& predictions){
+
+  int testSize = test.size();
+  vector<vector<int>> matrix(2, vector<int>(2, 0));
+  for(int i = 0; i < testSize; i++){
+    char p = predictions[i];
+    if(p == 'r' && p == test[i][test[0].size() - 1])
+    matrix[0][0]++;
+    else if(p == 'd' && p == test[i][test[0].size() - 1])
+    matrix[1][1]++;
+    else if(p == 'r' && p != test[i][test[0].size() - 1])
+    matrix[0][1]++;
+    else if(p == 'd' && p != test[i][test[0].size() - 1])
+    matrix[1][0]++;
+  }
+
+  return matrix;
+}
+
+pair<double, vector<vector<int>>> evaluate(const vector<vector<char>>& testData, const vector<vector<pair<double, double>>>& probs){
   int count = 0;
   int size = testData.size();
+  vector<char> predictions;
 
   for(int i = 0; i < size - 1; i++){
     char p = predict(testData[i], probs);
+    predictions.push_back(p);
     if(p == testData[i][testData[0].size() - 1]) count++;
   }
 
-  return count/ (double) size;
+  return make_pair(count/ (double) size, getConfusionMatrix(testData, predictions));
 }
 
-double learnAndEvaluate(const vector<vector<char>>& train, const vector<vector<char>>& test){
+pair<double, vector<vector<int>>> learnAndEvaluate(const vector<vector<char>>& train, const vector<vector<char>>& test){
   vector<vector<pair<double, double>>> probs = getProbabilities(train);
-  double score = evaluate(train, probs);
-  return score;
+  pair<double, vector<vector<int>>> scores = evaluate(train, probs);
+  return scores;
 }
-
-vector<vector<int>> getConfusionMatrix(const vector<vector<char>>& test, const vector<vector<pair<double, double>>>& probs){
-      
-      int testSize = test.size();
-      vector<vector<int>> matrix(2, vector<int>(2, 0));
-      for(int i = 0; i < testSize; i++){
-          char p = predict(test[i], probs);
-          if(p == 'r' && p == test[i][test[0].size() - 1])
-              matrix[0][0]++;
-          else if(p == 'd' && p == test[i][test[0].size() - 1])
-              matrix[1][1]++;
-          else if(p == 'r' && p != test[i][test[0].size() - 1])
-              matrix[0][1]++;
-          else if(p == 'd' && p != test[i][test[0].size() - 1])
-              matrix[1][0]++;
-      }
-
-      return matrix;  
-}
-
 
 
 pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset, int split){
@@ -138,7 +140,9 @@ pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset,
   // vector<vector<char>> train, test;
   for(int i = 0; i < n; i++){
     shuffleAndSplit(dataset, train, test, 20);
-    scores.push_back(learnAndEvaluate(train, test));
+    pair<double, vector<vector<int>>> ret = learnAndEvaluate(train, test);
+    printData(ret.second);
+    scores.push_back(ret.first);
   }
 
   return make_pair(scores, accumulate(scores.begin(), scores.end(), 0.0) / scores.size()) ;

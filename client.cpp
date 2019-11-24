@@ -12,7 +12,7 @@ int main(){
   }
 
 
-  pair<vector<double>, double> retBagging = crossValidateWithBagging(10, dataset, 20, 5, 100);
+  pair<vector<double>, double> retBagging = crossValidateWithBagging(10, dataset, 20, 15, 50);
 
   for(int i = 0; i < 10; i++){
     cout << retBagging.first[i] << endl;
