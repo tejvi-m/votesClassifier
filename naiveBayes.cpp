@@ -108,6 +108,26 @@ double learnAndEvaluate(const vector<vector<char>>& train, const vector<vector<c
   return score;
 }
 
+vector<vector<int>> getConfusionMatrix(const vector<vector<char>>& test, const vector<vector<pair<double, double>>>& probs){
+      
+      int testSize = test.size();
+      vector<vector<int>> matrix(2, vector<int>(2, 0));
+      for(int i = 0; i < testSize; i++){
+          char p = predict(test[i], probs);
+          if(p == 'r' && p == test[i][test[0].size() - 1])
+              matrix[0][0]++;
+          else if(p == 'd' && p == test[i][test[0].size() - 1])
+              matrix[1][1]++;
+          else if(p == 'r' && p != test[i][test[0].size() - 1])
+              matrix[0][1]++;
+          else if(p == 'd' && p != test[i][test[0].size() - 1])
+              matrix[1][0]++;
+      }
+
+      return matrix;  
+}
+
+
 
 pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset, int split){
   vector<double> scores;
