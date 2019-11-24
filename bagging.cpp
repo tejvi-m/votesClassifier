@@ -33,7 +33,7 @@ char voteAndPredict(const vector<char>& testData, const vector<vector<vector<pai
     else return 'r';
 }
 
-double learnFromBagsAndEvaluate(const vector<vector<char>>& train, const vector<vector<char>>& testData, int bags, int sampleSize){
+pair<double, vector<vector<int>>> learnFromBagsAndEvaluate(const vector<vector<char>>& train, const vector<vector<char>>& testData, int bags, int sampleSize){
 
   vector<vector<vector<char>>> trainData = getBaggedData(train, bags, sampleSize);
   vector<vector<vector<pair<double, double>>>> probabilities;
@@ -47,13 +47,15 @@ double learnFromBagsAndEvaluate(const vector<vector<char>>& train, const vector<
   }
 
   for(int i = 0; i < testData.size(); i++){
-    if(voteAndPredict(testData[i], probabilities) == testData[i][testData[0].size() - 1]) count++;
+    char p = voteAndPredict(testData[i], probabilities);
+    predictions.push_back(p);
+    if(p == testData[i][testData[0].size() - 1]) count++;
   }
 
 
   score = count / (double) testData.size();
 
-  return score;
+  return make_pair(score, getConfusionMatrix(testData, predictions));
 
 }
 
@@ -66,7 +68,9 @@ pair<vector<double>, double> crossValidateWithBagging(int n, vector<vector<char>
   // vector<vector<char>> train, test;
   for(int i = 0; i < n; i++){
     shuffleAndSplit(dataset, train, test, 20);
-    scores.push_back(learnFromBagsAndEvaluate(train, test, bags, sampleSize));
+    pair<double, vector<vector<int>>> ret = learnFromBagsAndEvaluate(train, test, bags, sampleSize);
+    printData(ret.second);
+    scores.push_back(ret.first);
   }
 
   return make_pair(scores, accumulate(scores.begin(), scores.end(), 0.0) / scores.size()) ;
