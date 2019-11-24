@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
-#include "preprocess.cpp"
+// #include "preprocess.cpp"
+// #include "bagging.cpp"
 
 using namespace std;
 
@@ -149,35 +150,18 @@ pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset,
   return make_pair(scores, accumulate(scores.begin(), scores.end(), 0.0) / scores.size()) ;
 }
 
-int main(){
-  vector<vector<char>> dataset = openFile("./data/votesdata.txt");
-  saveDataset("./data/cleanedDataset.txt", dataset);
-  vector<vector<pair<double, double>>> probs = getProbabilities(dataset);
 
-
-  // cout << crossValidate(10, dataset, 20).second;
-
-
-  pair<vector<double>, double> ret = crossValidate(10, dataset, 20);
-
-  for(int i = 0; i < 10; i++){
-    cout << ret.first[i] << endl;
-  }
-  //to get the evaluation metrics for a test split.
-  vector<vector<int>>confusionMatrix = getConfuseMatrix(20, dataset);
-  
-  /* for(auto i : confusionMatrix){
-    for(auto j : i){
-      cout << j << " ";
-    }
-    cout << "\n";
-  } */
-
-  //population size is small, so would bagging help?
-  vector<vector<vector<char>>> bootstrapSamples = bootstrapSampling(10, 40, 20, dataset);
-
-  cout << bootstrapSamples[0][1].size() << "\n";
-
-  cout << "average: " << ret.second << endl;
-  return 0;
-}
+//
+// int main(){
+//   vector<vector<char>> dataset = openFile("./data/votesData.txt");
+//   vector<vector<pair<double, double>>> probs = getProbabilities(dataset);
+//
+//   pair<vector<double>, double> ret = crossValidate(10, dataset, 20);
+//
+//   for(int i = 0; i < 10; i++){
+//     cout << ret.first[i] << endl;
+//   }
+//
+//   cout << "average: " << ret.second << endl;
+//   return 0;
+// }
