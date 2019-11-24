@@ -108,14 +108,8 @@ double learnAndEvaluate(const vector<vector<char>>& train, const vector<vector<c
   return score;
 }
 
-//probably change stuff here to get the eval metrics in kfold process.
-vector<vector<int>> getConfuseMatrix(int split, vector<vector<char>>& dataset){
+vector<vector<int>> getConfusionMatrix(const vector<vector<char>>& test, const vector<vector<pair<double, double>>>& probs){
       
-      vector<vector<char>> train(dataset.size() - ((dataset.size() * split) / 100) + 1);
-      vector<vector<char>> test((dataset.size() * split) / 100);
-
-      shuffleAndSplit(dataset, train, test, split);
-      vector<vector<pair<double, double>>> probs = getProbabilities(dataset);
       int testSize = test.size();
       vector<vector<int>> matrix(2, vector<int>(2, 0));
       for(int i = 0; i < testSize; i++){
