@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 // #include "preprocess.cpp"
-#include "bagging.cpp"
+// #include "bagging.cpp"
 
 using namespace std;
 
@@ -124,32 +124,18 @@ pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset,
   return make_pair(scores, accumulate(scores.begin(), scores.end(), 0.0) / scores.size()) ;
 }
 
-pair<vector<double>, double> crossValidateWithBagging(int n, vector<vector<char>>& dataset, int split, int bags, int sampleSize){
-  vector<double> scores;
-  int x = (dataset.size() * split) / 100;
-  vector<vector<char>> train(dataset.size() - x + 1);
-  vector<vector<char>> test(x);
 
-  // vector<vector<char>> train, test;
-  for(int i = 0; i < n; i++){
-    shuffleAndSplit(dataset, train, test, 20);
-    scores.push_back(learnFromBagsAndEvaluate(train, test, bags, sampleSize));
-  }
-
-  return make_pair(scores, accumulate(scores.begin(), scores.end(), 0.0) / scores.size()) ;
-}
-
-
-int main(){
-  vector<vector<char>> dataset = openFile("./data/votesData.txt");
-  vector<vector<pair<double, double>>> probs = getProbabilities(dataset);
-
-  pair<vector<double>, double> ret = crossValidate(10, dataset, 20);
-
-  for(int i = 0; i < 10; i++){
-    cout << ret.first[i] << endl;
-  }
-
-  cout << "average: " << ret.second << endl;
-  return 0;
-}
+//
+// int main(){
+//   vector<vector<char>> dataset = openFile("./data/votesData.txt");
+//   vector<vector<pair<double, double>>> probs = getProbabilities(dataset);
+//
+//   pair<vector<double>, double> ret = crossValidate(10, dataset, 20);
+//
+//   for(int i = 0; i < 10; i++){
+//     cout << ret.first[i] << endl;
+//   }
+//
+//   cout << "average: " << ret.second << endl;
+//   return 0;
+// }
