@@ -93,6 +93,34 @@ void shuffleAndSplit(vector<vector<char>>& dataset, vector<vector<char>>& train,
 
 }
 
+vector<vector<char>> sampleWithRepl(int bSize, vector<vector<char>>& dataset){
+      srand(time(NULL));
+      vector<vector<char>> sample;
+      for(int i = 0; i < bSize; i++){
+        int instance = rand() % dataset.size();
+        sample.push_back(dataset[instance]);
+      }
+
+      return sample;
+
+
+}
+
+vector<vector<vector<char>>> bootstrapSampling(int nSamples, int bSize, int split, vector<vector<char>>& dataset){
+    vector<vector<vector<char>>> bootstrapSamples;
+    int x = (dataset.size() * split) / 100;
+    vector<vector<char>> train(dataset.size() - x + 1);
+    vector<vector<char>> test(x);
+
+    shuffleAndSplit(dataset, train, test, split);
+    for(int i = 0; i < nSamples; i++){
+        bootstrapSamples.push_back(sampleWithRepl(bSize, train));
+    }
+
+    return bootstrapSamples;
+}
+
+
 void saveDataset(string filename, vector<vector<char>>& dataset){
 
     ofstream outFile; 

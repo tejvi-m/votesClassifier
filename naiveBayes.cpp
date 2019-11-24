@@ -107,14 +107,15 @@ double learnAndEvaluate(const vector<vector<char>>& train, const vector<vector<c
   return score;
 }
 
+//probably change stuff here to get the eval metrics in kfold process.
 vector<vector<int>> getConfuseMatrix(int split, vector<vector<char>>& dataset){
+      
       vector<vector<char>> train(dataset.size() - ((dataset.size() * split) / 100) + 1);
       vector<vector<char>> test((dataset.size() * split) / 100);
 
       shuffleAndSplit(dataset, train, test, split);
       vector<vector<pair<double, double>>> probs = getProbabilities(dataset);
       int testSize = test.size();
-      int tp = 0, fp = 0, tn = 0, fn = 0;
       vector<vector<int>> matrix(2, vector<int>(2, 0));
       for(int i = 0; i < testSize; i++){
           char p = predict(test[i], probs);
@@ -162,15 +163,20 @@ int main(){
   for(int i = 0; i < 10; i++){
     cout << ret.first[i] << endl;
   }
-  //to get the evaluation metrics.
+  //to get the evaluation metrics for a test split.
   vector<vector<int>>confusionMatrix = getConfuseMatrix(20, dataset);
   
-  for(auto i : confusionMatrix){
+  /* for(auto i : confusionMatrix){
     for(auto j : i){
       cout << j << " ";
     }
     cout << "\n";
-  }
+  } */
+
+  //population size is small, so would bagging help?
+  vector<vector<vector<char>>> bootstrapSamples = bootstrapSampling(10, 40, 20, dataset);
+
+  cout << bootstrapSamples[0][1].size() << "\n";
 
   cout << "average: " << ret.second << endl;
   return 0;
