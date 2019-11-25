@@ -59,32 +59,47 @@ pair<double, vector<vector<int>>> learnFromBagsAndEvaluate(const vector<vector<c
 
 }
 
-pair<vector<double>, double> crossValidateWithBagging(int n, vector<vector<char>>& dataset, int split, int bags, int sampleSize){
-  vector<double> scores;
-  int x = (dataset.size() * split) / 100;
-  vector<vector<char>> train(dataset.size() - x + 1);
-  vector<vector<char>> test(x);
+pair<vector<double>, double> crossValidateWithBagging(int n, vector<vector<char>>& dataset, int bags, int sampleSize){
+    vector<double> scores;
+    int x = (dataset.size() /  n);
 
-  // vector<vector<char>> train, test;
-  for(int i = 0; i < n; i++){
-    shuffleAndSplit(dataset, train, test, 20);
-    pair<double, vector<vector<int>>> ret = learnFromBagsAndEvaluate(train, test, bags, sampleSize);
-    printData(ret.second);
-    scores.push_back(ret.first);
-  }
+    vector<double> metrics, precisions, recalls, F1s;
+    pair<double, vector<vector<int>>> ret;
 
-  return make_pair(scores, accumulate(scores.begin(), scores.end(), 0.0) / scores.size()) ;
+    shuffle(dataset);
+
+    vector<vector<char>> train;
+    vector<vector<char>> test;
+
+    // i guess this will function as  an offset of sort?
+
+    for(int i = 0; i < n; i++){
+      for(int j = 0; j < dataset.size(); j++){
+        if(j >= i * x && j < i * x + x){
+          test.push_back(dataset[j]);
+        }
+        else{
+          train.push_back(dataset[j]);
+        }
+      }
+
+
+      ret = learnFromBagsAndEvaluate(train, test, bags, sampleSize);
+      scores.push_back(ret.first);
+
+      metrics = getMetrics(ret.second);
+      recalls.push_back(metrics[0]);
+      precisions.push_back(metrics[1]);
+      F1s.push_back(metrics[2]);
+
+
+      train.clear();
+      test.clear();
+    }
+
+    metrics[0] = accumulate(recalls.begin(), recalls.end(), 0.0) / recalls.size();
+    metrics[1] = accumulate(precisions.begin(), precisions.end(), 0.0) / precisions.size();
+    metrics[2] = accumulate(F1s.begin(), F1s.end(), 0.0) / F1s.size();
+
+    return make_pair(metrics, accumulate(scores.begin(), scores.end(), 0.0) / scores.size()) ;
 }
-//
-// int main(){
-//   vector<vector<char>> dataset = openFile("./data/votesData.txt");
-//   int split = 20;
-//   int x = (dataset.size() * split) / 100;
-//   vector<vector<char>> train(dataset.size() - x + 1);
-//   vector<vector<char>> test(x);
-//   shuffleAndSplit(dataset, train, test, 20);
-//   // vector<vector<vector<char>>> bags = getBaggedData(train, 5, 100);
-//   double score = learnFromBagsAndEvaluate(train, test, 5, 100);
-//
-//   cout << score << endl;
-// }

@@ -115,7 +115,7 @@ pair<double, vector<vector<int>>> evaluate(const vector<vector<char>>& testData,
   int size = testData.size();
   vector<char> predictions;
 
-  for(int i = 0; i < size - 1; i++){
+  for(int i = 0; i < size; i++){
     char p = predict(testData[i], probs);
     predictions.push_back(p);
     if(p == testData[i][testData[0].size() - 1]) count++;
@@ -131,11 +131,34 @@ pair<double, vector<vector<int>>> learnAndEvaluate(const vector<vector<char>>& t
 }
 
 
+vector<double> getMetrics(vector<vector<int>> confMatrix){
+    vector<double> metrics;
+    double precision, recall, F1;
+
+    //recall: TP / TP + FN
+    recall = confMatrix[1][1] / (double)(confMatrix[1][1] + confMatrix[1][0]);
+    metrics.push_back(recall);
+
+    // precision: TP / TP + FP
+    precision = confMatrix[1][1] / (double)(confMatrix[1][1] + confMatrix[0][1]);
+    metrics.push_back(precision);
+
+    // F measure
+    F1 = 2 * precision * recall / (precision + recall);
+    metrics.push_back(F1);
+
+    return metrics;
+}
+
 
 
 pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset){
   vector<double> scores;
   int x = (dataset.size() /  n);
+
+  vector<double> metrics, precisions, recalls, F1s;
+  pair<double, vector<vector<int>>> ret;
+
 
   shuffle(dataset);
 
@@ -158,30 +181,23 @@ pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset)
       }
     }
 
-    cout << "bleh: "<<train.size() << " " << test.size()<< endl;
-
-    pair<double, vector<vector<int>>> ret = learnAndEvaluate(train, test);
+    ret = learnAndEvaluate(train, test);
     scores.push_back(ret.first);
+
+    metrics = getMetrics(ret.second);
+    recalls.push_back(metrics[0]);
+    precisions.push_back(metrics[1]);
+    F1s.push_back(metrics[2]);
 
 
     train.clear();
     test.clear();
   }
 
-  return make_pair(scores, accumulate(scores.begin(), scores.end(), 0.0) / scores.size()) ;
+  metrics[0] = accumulate(recalls.begin(), recalls.end(), 0.0) / recalls.size();
+  metrics[1] = accumulate(precisions.begin(), precisions.end(), 0.0) / precisions.size();
+  metrics[2] = accumulate(F1s.begin(), F1s.end(), 0.0) / F1s.size();
+
+  return make_pair(metrics, accumulate(scores.begin(), scores.end(), 0.0) / scores.size()) ;
 
 }
-//
-// int main(){
-//   vector<vector<char>> dataset = openFile("./data/votesData.txt");
-//   vector<vector<pair<double, double>>> probs = getProbabilities(dataset);
-//
-//   pair<vector<double>, double> ret = crossValidate(10, dataset, 20);
-//
-//   for(int i = 0; i < 10; i++){
-//     cout << ret.first[i] << endl;
-//   }
-//
-//   cout << "average: " << ret.second << endl;
-//   return 0;
-// }
