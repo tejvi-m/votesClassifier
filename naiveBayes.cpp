@@ -124,6 +124,7 @@ pair<double, vector<vector<int>>> evaluate(const vector<vector<char>>& testData,
   return make_pair(count/ (double) size, getConfusionMatrix(testData, predictions));
 }
 
+
 pair<double, vector<vector<int>>> learnAndEvaluate(const vector<vector<char>>& train, const vector<vector<char>>& test){
   vector<vector<pair<double, double>>> probs = getProbabilities(train);
   pair<double, vector<vector<int>>> scores = evaluate(test, probs);
