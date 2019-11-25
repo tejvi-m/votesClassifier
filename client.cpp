@@ -5,7 +5,7 @@
 int main(){
   vector<vector<char>> dataset = openFile("./data/votesData.txt");
 
-  pair<vector<double>, double> ret = crossValidate(10, dataset, 20);
+  pair<vector<double>, double> ret = crossValidate(10, dataset);
 
   for(int i = 0; i < 10; i++){
     cout << ret.first[i] << endl;

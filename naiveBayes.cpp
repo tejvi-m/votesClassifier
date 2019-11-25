@@ -126,29 +126,51 @@ pair<double, vector<vector<int>>> evaluate(const vector<vector<char>>& testData,
 
 pair<double, vector<vector<int>>> learnAndEvaluate(const vector<vector<char>>& train, const vector<vector<char>>& test){
   vector<vector<pair<double, double>>> probs = getProbabilities(train);
-  pair<double, vector<vector<int>>> scores = evaluate(train, probs);
+  pair<double, vector<vector<int>>> scores = evaluate(test, probs);
   return scores;
 }
 
 
-pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset, int split){
-  vector<double> scores;
-  int x = (dataset.size() * split) / 100;
-  vector<vector<char>> train(dataset.size() - x + 1);
-  vector<vector<char>> test(x);
 
-  // vector<vector<char>> train, test;
+
+pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset){
+  vector<double> scores;
+  int x = (dataset.size() /  n);
+
+  shuffle(dataset);
+
+  vector<vector<char>> train;
+  vector<vector<char>> test;
+
+  // i guess this will function as  an offset of sort?
+
   for(int i = 0; i < n; i++){
-    shuffleAndSplit(dataset, train, test, 20);
+
+    // vector<vector<char>> train;
+    // vector<vector<char>> test;
+
+    for(int j = 0; j < dataset.size(); j++){
+      if(j >= i * x && j < i * x + x){
+        test.push_back(dataset[j]);
+      }
+      else{
+        train.push_back(dataset[j]);
+      }
+    }
+
+    cout << "bleh: "<<train.size() << " " << test.size()<< endl;
+
     pair<double, vector<vector<int>>> ret = learnAndEvaluate(train, test);
-    printData(ret.second);
     scores.push_back(ret.first);
+
+
+    train.clear();
+    test.clear();
   }
 
   return make_pair(scores, accumulate(scores.begin(), scores.end(), 0.0) / scores.size()) ;
+
 }
-
-
 //
 // int main(){
 //   vector<vector<char>> dataset = openFile("./data/votesData.txt");

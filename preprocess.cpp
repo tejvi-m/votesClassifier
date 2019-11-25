@@ -83,14 +83,19 @@ void printData(const vector<vector<T>>& dataset){
 
 }
 
-void shuffleAndSplit(vector<vector<char>>& dataset, vector<vector<char>>& train, vector<vector<char>>& test, int split){
-
+void shuffle(vector<vector<char>>& dataset){
   srand(time(NULL));
   unsigned seed = rand();
   int size = dataset.size();
 
   shuffle(dataset.begin(), dataset.end(), default_random_engine(seed));
+}
 
+void shuffleAndSplit(vector<vector<char>>& dataset, vector<vector<char>>& train, vector<vector<char>>& test, int split){
+
+  int size = dataset.size();
+  
+  shuffle(dataset);
   copy(dataset.begin(), dataset.begin() + size - (dataset.size() * split) / 100, train.begin());
   copy(dataset.begin() + size - (dataset.size() * split) / 100, dataset.end(), test.begin());
 
