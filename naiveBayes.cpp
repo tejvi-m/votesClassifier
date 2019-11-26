@@ -62,6 +62,9 @@ vector<vector<pair<double, double>>> getProbabilities(const vector<vector<char>>
     probabilities[2][j].second /= size;
   }
 
+  vector<pair<double, double>> apriori{make_pair(r/(double)(r + d), d/(double)(r+d))};
+  probabilities.push_back(apriori);
+  
   return probabilities;
 }
 
@@ -85,6 +88,10 @@ char predict(const vector<char>& test, const vector<vector<pair<double, double>>
       prob2 *= probs[1][i].second;
     }
   }
+
+
+  prob1 = prob1 * probs[3][0].first;
+  prob2 = prob2 * probs[3][0].second;
 
   if(prob1 > prob2) return 'r';
   return 'd';
