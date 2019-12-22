@@ -14,7 +14,7 @@ vector<vector<vector<char>>> getBaggedData(const vector<vector<char>>& trainData
 
     for(int i = 0; i < numBags; i++){
       vector<vector<char>> bag;
-      std::experimental::fundamentals_v1::sample(trainData.begin(), trainData.end(), back_inserter(bag), sampleSize, mt19937{random_device{}()});
+      std::experimental::fundamentals_v2::sample(trainData.begin(), trainData.end(), back_inserter(bag), sampleSize, mt19937{random_device{}()});
       bags.push_back(bag);
     }
 
@@ -73,6 +73,8 @@ pair<vector<double>, double> crossValidateWithBagging(int n, vector<vector<char>
 
     // i guess this will function as  an offset of sort?
 
+
+    // TODO rewrite this part - have separate vectors for each of the splits
     for(int i = 0; i < n; i++){
       for(int j = 0; j < dataset.size(); j++){
         if(j >= i * x && j < i * x + x){
