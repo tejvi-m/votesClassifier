@@ -70,10 +70,7 @@ pair<vector<double>, double> crossValidateWithBagging(int n, vector<vector<char>
 
     vector<vector<char>> train;
     vector<vector<char>> test;
-
-    // i guess this will function as  an offset of sort?
-
-
+    
     // TODO rewrite this part - have separate vectors for each of the splits
     for(int i = 0; i < n; i++){
       for(int j = 0; j < dataset.size(); j++){

@@ -32,6 +32,8 @@ vector<bool> getMax(const vector<vector<char>>& dataset){
 
 
 
+//despite the name, it fills in the value with the max frequency
+
 void fillMax(vector<vector<char>>& dataset){
     vector<bool> maxVals = getMax(dataset);
 

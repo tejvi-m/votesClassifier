@@ -1,7 +1,5 @@
 #include <iostream>
 #include <vector>
-// #include "preprocess.cpp"
-// #include "bagging.cpp"
 
 using namespace std;
 
@@ -64,7 +62,7 @@ vector<vector<pair<double, double>>> getProbabilities(const vector<vector<char>>
 
   vector<pair<double, double>> apriori{make_pair(r/(double)(r + d), d/(double)(r+d))};
   probabilities.push_back(apriori);
-  
+
   return probabilities;
 }
 
@@ -159,7 +157,7 @@ vector<double> getMetrics(vector<vector<int>> confMatrix){
 }
 
 
-
+//TODO rewrite this to avoid redundant code in crossValidateWithBagging
 pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset){
   vector<double> scores;
   int x = (dataset.size() /  n);
@@ -173,12 +171,8 @@ pair<vector<double>, double> crossValidate(int n, vector<vector<char>>& dataset)
   vector<vector<char>> train;
   vector<vector<char>> test;
 
-  // i guess this will function as  an offset of sort?
 
   for(int i = 0; i < n; i++){
-
-    // vector<vector<char>> train;
-    // vector<vector<char>> test;
 
     for(int j = 0; j < dataset.size(); j++){
       if(j >= i * x && j < i * x + x){
