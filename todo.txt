@@ -1,9 +1,0 @@
-1. Add docs, for the love of godes
-- Yes this can be worked on
-
-2. Could use bagging - use different ways of filling in the missing values, train and treat them as separate models?
-
-3. Boosting - write adaboost, idk how well it would work with this.
-- What's the accuracy right now? We should have a good reason to implement a feature.
-
-4. What about data visualization, all the data science stuffs. Is it important? 
